@@ -1,0 +1,436 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>NameLab — генератор имён</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, sans-serif;
+            min-height: 100vh;
+            transition: background 0.3s ease, color 0.3s ease;
+            background: #f0f4f8;
+            color: #1e293b;
+        }
+
+        body.dark {
+            background: #0f172a;
+            color: #e2e8f0;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        body.loaded::before {
+            opacity: 0.2;
+        }
+
+        body.dark.loaded::before {
+            opacity: 0.3;
+        }
+
+        /* Фэнтези */
+        body.fantasy-bg.loaded::before {
+            background-image: url('https://media.giphy.com/media/3o7abB06u9bNzA8LC8/giphy.gif?cid=790b7611xj1vhpkbnp52h46vlt0kl0y836yf04nxpr7w3jto&ep=v1_gifs_search&rid=giphy.gif&ct=g');
+            background-size: cover;
+        }
+
+        /* Киберпанк */
+        body.cyberpunk-bg.loaded::before {
+            background-image: url('https://media.giphy.com/media/xT9IgzoKnwFNmISR8I/giphy.gif?cid=790b7611unvh7pyxfi33x9sldpxu6nbsurwejbtyfakmmwfl&ep=v1_gifs_search&rid=giphy.gif&ct=g');
+            background-size: cover;
+        }
+
+        /* Славянские */
+        body.slavic-bg.loaded::before {
+            background-image: url('https://media.giphy.com/media/26FmQ6MPqYCyqmLK0/giphy.gif?cid=790b7611f5uah3ahmzpyw14x0fpl81yjf4isj3kh6uvcsket&ep=v1_gifs_search&rid=giphy.gif&ct=g');
+            background-size: cover;
+        }
+
+        /* Игровые — с культовыми персонажами */
+        body.gaming-bg.loaded::before {
+            background-image: url('https://i.pinimg.com/originals/6e/6f/b0/6e6fb0e5c8a3f7e5e5b0c9f0e5e5b0c9.gif');
+            background-size: cover;
+        }
+
+        /* Мифические */
+        body.mythical-bg.loaded::before {
+            background-image: url('https://media.giphy.com/media/3o7aD2d7hy9ktXNDP2/giphy.gif?cid=790b7611osww4nqkbcak7exfy3k521s3ixg0ivulhq8oacpo&ep=v1_gifs_search&rid=giphy.gif&ct=g');
+            background-size: cover;
+        }
+
+        .container {
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 24px 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .title-section h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #f97316, #3b82f6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .title-section p {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        body.dark .title-section p {
+            color: #94a3b8;
+        }
+
+        .theme-switch {
+            background: #e2e8f0;
+            border-radius: 40px;
+            padding: 4px;
+            display: flex;
+            gap: 4px;
+        }
+
+        body.dark .theme-switch {
+            background: #1e293b;
+        }
+
+        .theme-option {
+            padding: 6px 14px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            border-radius: 32px;
+            cursor: pointer;
+            background: transparent;
+            border: none;
+            color: #475569;
+        }
+
+        body.dark .theme-option {
+            color: #94a3b8;
+        }
+
+        .theme-option.active {
+            background: #f97316;
+            color: white;
+        }
+
+        .category-card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 32px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        body.dark .category-card {
+            background: rgba(30, 41, 59, 0.9);
+        }
+
+        .category-title {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+            color: #f97316;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .categories-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .cat-btn {
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            border-radius: 60px;
+            padding: 10px 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #334155;
+        }
+
+        body.dark .cat-btn {
+            background: #1e293b;
+            border-color: #334155;
+            color: #cbd5e1;
+        }
+
+        .cat-btn.active {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: white;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .names-card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 32px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        body.dark .names-card {
+            background: rgba(30, 41, 59, 0.9);
+        }
+
+        .names-header {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+            color: #10b981;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .names-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .name-item {
+            background: #f8fafc;
+            border-radius: 60px;
+            padding: 10px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            border: 1px solid #e2e8f0;
+        }
+
+        body.dark .name-item {
+            background: #0f172a;
+            border-color: #334155;
+        }
+
+        .name-text {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #1e293b;
+        }
+
+        body.dark .name-text {
+            color: #f1f5f9;
+        }
+
+        .copy-btn {
+            background: #e2e8f0;
+            border: none;
+            border-radius: 40px;
+            padding: 6px 16px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            color: #3b82f6;
+            font-weight: 500;
+        }
+
+        body.dark .copy-btn {
+            background: #1e293b;
+            color: #60a5fa;
+        }
+
+        .generate-btn {
+            background: linear-gradient(135deg, #f97316, #eab308);
+            border: none;
+            border-radius: 60px;
+            padding: 14px 24px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: white;
+            width: 100%;
+            cursor: pointer;
+            transition: transform 0.1s;
+            box-shadow: 0 4px 15px rgba(249, 115, 22, 0.3);
+        }
+
+        .generate-btn:active {
+            transform: scale(0.98);
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 0.65rem;
+            color: #94a3b8;
+            margin-top: 24px;
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 20px;
+            color: #94a3b8;
+        }
+    </style>
+</head>
+<body class="fantasy-bg">
+<div class="container">
+    <div class="header">
+        <div class="title-section">
+            <h1>🧪 NameLab</h1>
+            <p>Генератор имён с характером</p>
+        </div>
+        <div class="theme-switch">
+            <button data-theme="light" class="theme-option active">☀️</button>
+            <button data-theme="dark" class="theme-option">🌙</button>
+        </div>
+    </div>
+
+    <div class="category-card">
+        <div class="category-title">🎭 Выбери категорию</div>
+        <div class="categories-grid" id="categoriesGrid">
+            <button data-cat="fantasy" class="cat-btn active">🧙 Фэнтези</button>
+            <button data-cat="cyberpunk" class="cat-btn">🤖 Киберпанк</button>
+            <button data-cat="slavic" class="cat-btn">⚔️ Славянские</button>
+            <button data-cat="gaming" class="cat-btn">🎮 Игровые</button>
+            <button data-cat="mythical" class="cat-btn">🐉 Мифические</button>
+        </div>
+    </div>
+
+    <div class="names-card">
+        <div class="names-header">✨ Имена</div>
+        <div class="names-list" id="namesList">
+            <div class="empty-message">Выберите категорию</div>
+        </div>
+        <button id="generateBtn" class="generate-btn">🔄 Сгенерировать</button>
+    </div>
+
+    <div class="footer">
+        🔥 Нажми на имя — скопируй
+    </div>
+</div>
+
+<script>
+    const namesDB = {
+        fantasy: ["Элариан", "Сильвана", "Торион", "Люмиэль", "Дориан", "Финрод", "Арвенэль", "Трандуил", "Галадриэль", "Эрагор"],
+        cyberpunk: ["Nexus-7", "Zero_K3", "Raven_Synth", "Vex_H4", "Nova_Ryder", "Cipher_X", "Echo_404", "Ghost_Byte", "Pixel_K1", "Frost_9"],
+        slavic: ["Борислав", "Мирослава", "Владимир", "Добрыня", "Златомир", "Ладимир", "Святогор", "Белослава", "Радомир", "Велеслав"],
+        gaming: ["NightHunter", "ShadowReaper", "QueenBee", "IronViper", "SilentKill", "PhantomFox", "BlazeStorm", "CrimsonGhost", "NeonSpectre", "ThunderWolf"],
+        mythical: ["Игнис", "Аурелия", "Зефирон", "Серафис", "Обсидиан", "Люциан", "Валерион", "Моргана", "Этернис", "Солорин"]
+    };
+
+    const bgClasses = {
+        fantasy: "fantasy-bg",
+        cyberpunk: "cyberpunk-bg",
+        slavic: "slavic-bg",
+        gaming: "gaming-bg",
+        mythical: "mythical-bg"
+    };
+
+    let currentCat = "fantasy";
+    let currentTheme = localStorage.getItem('namelab_theme') || 'light';
+
+    function setTheme(theme) {
+        currentTheme = theme;
+        if (theme === 'dark') {
+            document.body.classList.add('dark');
+        } else {
+            document.body.classList.remove('dark');
+        }
+        localStorage.setItem('namelab_theme', theme);
+        document.querySelectorAll('.theme-option').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.theme === theme);
+        });
+    }
+
+    function changeBackground(category) {
+        document.body.classList.remove(...Object.values(bgClasses));
+        document.body.classList.add(bgClasses[category]);
+        document.body.classList.remove('loaded');
+        setTimeout(() => document.body.classList.add('loaded'), 50);
+    }
+
+    function renderNames() {
+        const names = namesDB[currentCat];
+        const shuffled = [...names].sort(() => Math.random() - 0.5);
+        const selected = shuffled.slice(0, 8);
+        
+        const html = selected.map(name => `
+            <div class="name-item">
+                <span class="name-text">${escapeHtml(name)}</span>
+                <button class="copy-btn" data-name="${escapeHtml(name)}">📋 Копировать</button>
+            </div>
+        `).join('');
+        
+        document.getElementById('namesList').innerHTML = html;
+        
+        document.querySelectorAll('.copy-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const name = btn.dataset.name;
+                navigator.clipboard.writeText(name);
+                const original = btn.textContent;
+                btn.textContent = '✅ Готово';
+                setTimeout(() => btn.textContent = original, 1000);
+            });
+        });
+    }
+
+    function escapeHtml(str) {
+        return str.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m]));
+    }
+
+    document.querySelectorAll('.cat-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentCat = btn.dataset.cat;
+            changeBackground(currentCat);
+            renderNames();
+        });
+    });
+
+    document.getElementById('generateBtn').addEventListener('click', () => {
+        renderNames();
+    });
+
+    document.querySelectorAll('.theme-option').forEach(btn => {
+        btn.addEventListener('click', () => setTheme(btn.dataset.theme));
+    });
+
+    setTheme(currentTheme);
+    changeBackground('fantasy');
+    renderNames();
+    document.body.classList.add('loaded');
+</script>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+</body>
+</html>
