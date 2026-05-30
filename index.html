@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>NameLab — генератор имён</title>
+    <title>NameLab — генератор никнеймов</title>
     <style>
         * {
             margin: 0;
@@ -14,89 +14,33 @@
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, sans-serif;
             min-height: 100vh;
-            transition: background 0.3s ease, color 0.3s ease;
-            background: #f0f4f8;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e9eef3 100%);
             color: #1e293b;
+            transition: background 0.3s ease;
         }
 
         body.dark {
-            background: #0f172a;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
             color: #e2e8f0;
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            opacity: 0;
-            transition: opacity 0.5s ease-in-out;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        body.loaded::before {
-            opacity: 0.2;
-        }
-
-        body.dark.loaded::before {
-            opacity: 0.3;
-        }
-
-        /* Фэнтези — магический лес */
-        body.fantasy-bg.loaded::before {
-            background-image: url('https://i.pinimg.com/originals/8b/6b/8c/8b6b8c8b6b8c8b6b8c8b6b8c8b6b8c8b.gif');
-            background-size: cover;
-        }
-
-        /* Киберпанк — неоновый город */
-        body.cyberpunk-bg.loaded::before {
-            background-image: url('https://i.pinimg.com/originals/3a/3a/3a/3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a.gif');
-            background-size: cover;
-        }
-
-        /* Славянские — богатырский эпос */
-        body.slavic-bg.loaded::before {
-            background-image: url('https://i.pinimg.com/originals/4b/4b/4b/4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b.gif');
-            background-size: cover;
-        }
-
-        /* Игровые — культовые персонажи */
-        body.gaming-bg.loaded::before {
-            background-image: url('https://i.pinimg.com/originals/6e/6f/b0/6e6fb0e5c8a3f7e5e5b0c9f0e5e5b0c9.gif');
-            background-size: cover;
-        }
-
-        /* Мифические — драконы и легенды */
-        body.mythical-bg.loaded::before {
-            background-image: url('https://i.pinimg.com/originals/7a/7a/7a/7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a.gif');
-            background-size: cover;
         }
 
         .container {
             max-width: 680px;
             margin: 0 auto;
-            padding: 24px 16px;
-            position: relative;
-            z-index: 1;
+            padding: 20px 16px;
         }
 
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 32px;
+            margin-bottom: 24px;
             flex-wrap: wrap;
             gap: 12px;
         }
 
         .title-section h1 {
-            font-size: 2rem;
+            font-size: 1.8rem;
             font-weight: 800;
             background: linear-gradient(135deg, #f97316, #3b82f6);
             -webkit-background-clip: text;
@@ -105,12 +49,8 @@
         }
 
         .title-section p {
-            font-size: 0.8rem;
-            color: #64748b;
-        }
-
-        body.dark .title-section p {
-            color: #94a3b8;
+            font-size: 0.75rem;
+            opacity: 0.7;
         }
 
         .theme-switch {
@@ -122,13 +62,12 @@
         }
 
         body.dark .theme-switch {
-            background: #1e293b;
+            background: #334155;
         }
 
         .theme-option {
             padding: 6px 14px;
             font-size: 0.8rem;
-            font-weight: 500;
             border-radius: 32px;
             cursor: pointer;
             background: transparent;
@@ -137,7 +76,7 @@
         }
 
         body.dark .theme-option {
-            color: #94a3b8;
+            color: #cbd5e1;
         }
 
         .theme-option.active {
@@ -147,10 +86,11 @@
 
         .category-card {
             background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
             border-radius: 32px;
-            padding: 24px;
+            padding: 20px;
             margin-bottom: 20px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
         }
 
         body.dark .category-card {
@@ -158,37 +98,39 @@
         }
 
         .category-title {
+            text-align: center;
             font-size: 0.7rem;
             text-transform: uppercase;
             letter-spacing: 2px;
-            font-weight: 600;
             color: #f97316;
             margin-bottom: 16px;
-            text-align: center;
         }
 
         .categories-grid {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 12px;
             justify-content: center;
         }
 
         .cat-btn {
-            background: #f1f5f9;
+            background: #fff;
             border: 1px solid #e2e8f0;
             border-radius: 60px;
-            padding: 10px 20px;
-            font-size: 0.85rem;
-            font-weight: 500;
+            padding: 12px 20px;
+            font-size: 1rem;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
             color: #334155;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         body.dark .cat-btn {
             background: #1e293b;
-            border-color: #334155;
+            border-color: #475569;
             color: #cbd5e1;
         }
 
@@ -199,12 +141,24 @@
             box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
         }
 
+        .cat-emoji {
+            font-size: 1.4rem;
+            display: inline-block;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-5px) scale(1.1); }
+        }
+
         .names-card {
             background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
             border-radius: 32px;
-            padding: 24px;
+            padding: 20px;
             margin-bottom: 20px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
         }
 
         body.dark .names-card {
@@ -212,26 +166,37 @@
         }
 
         .names-header {
+            text-align: center;
             font-size: 0.7rem;
             text-transform: uppercase;
             letter-spacing: 2px;
-            font-weight: 600;
             color: #10b981;
             margin-bottom: 16px;
+        }
+
+        .category-big-emoji {
             text-align: center;
+            font-size: 4rem;
+            margin-bottom: 16px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(5deg); }
         }
 
         .names-list {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 10px;
             margin-bottom: 20px;
         }
 
         .name-item {
-            background: #f8fafc;
+            background: rgba(255, 255, 255, 0.8);
             border-radius: 60px;
-            padding: 10px 16px;
+            padding: 12px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -240,18 +205,13 @@
         }
 
         body.dark .name-item {
-            background: #0f172a;
+            background: rgba(15, 23, 42, 0.8);
             border-color: #334155;
         }
 
         .name-text {
             font-size: 1rem;
             font-weight: 500;
-            color: #1e293b;
-        }
-
-        body.dark .name-text {
-            color: #f1f5f9;
         }
 
         .copy-btn {
@@ -259,29 +219,33 @@
             border: none;
             border-radius: 40px;
             padding: 6px 16px;
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             cursor: pointer;
             color: #3b82f6;
             font-weight: 500;
+            transition: transform 0.1s;
         }
 
         body.dark .copy-btn {
-            background: #1e293b;
+            background: #334155;
             color: #60a5fa;
+        }
+
+        .copy-btn:active {
+            transform: scale(0.95);
         }
 
         .generate-btn {
             background: linear-gradient(135deg, #f97316, #eab308);
             border: none;
             border-radius: 60px;
-            padding: 14px 24px;
+            padding: 14px 20px;
             font-size: 1rem;
             font-weight: 600;
             color: white;
             width: 100%;
             cursor: pointer;
             transition: transform 0.1s;
-            box-shadow: 0 4px 15px rgba(249, 115, 22, 0.3);
         }
 
         .generate-btn:active {
@@ -291,23 +255,17 @@
         .footer {
             text-align: center;
             font-size: 0.65rem;
-            color: #94a3b8;
+            opacity: 0.6;
             margin-top: 24px;
-        }
-
-        .empty-message {
-            text-align: center;
-            padding: 20px;
-            color: #94a3b8;
         }
     </style>
 </head>
-<body class="fantasy-bg">
+<body>
 <div class="container">
     <div class="header">
         <div class="title-section">
             <h1>🧪 NameLab</h1>
-            <p>Генератор имён с характером</p>
+            <p>Генератор никнеймов с характером</p>
         </div>
         <div class="theme-switch">
             <button data-theme="light" class="theme-option active">☀️</button>
@@ -316,44 +274,40 @@
     </div>
 
     <div class="category-card">
-        <div class="category-title">🎭 Выбери категорию</div>
+        <div class="category-title">🎭 ВЫБЕРИ КАТЕГОРИЮ</div>
         <div class="categories-grid" id="categoriesGrid">
-            <button data-cat="fantasy" class="cat-btn active">🧙 Фэнтези</button>
-            <button data-cat="cyberpunk" class="cat-btn">🤖 Киберпанк</button>
-            <button data-cat="slavic" class="cat-btn">⚔️ Славянские</button>
-            <button data-cat="gaming" class="cat-btn">🎮 Игровые</button>
-            <button data-cat="mythical" class="cat-btn">🐉 Мифические</button>
+            <button data-cat="fantasy" class="cat-btn active"><span class="cat-emoji">🧙</span> Фэнтези</button>
+            <button data-cat="cyberpunk" class="cat-btn"><span class="cat-emoji">🤖</span> Киберпанк</button>
+            <button data-cat="gaming" class="cat-btn"><span class="cat-emoji">🎮</span> Игровые</button>
+            <button data-cat="mythical" class="cat-btn"><span class="cat-emoji">🐉</span> Мифические</button>
         </div>
     </div>
 
     <div class="names-card">
-        <div class="names-header">✨ Имена</div>
-        <div class="names-list" id="namesList">
-            <div class="empty-message">Выберите категорию</div>
-        </div>
+        <div class="names-header">✨ НИКНЕЙМЫ</div>
+        <div class="category-big-emoji" id="bigEmoji">🧙</div>
+        <div class="names-list" id="namesList"></div>
         <button id="generateBtn" class="generate-btn">🔄 Сгенерировать</button>
     </div>
 
     <div class="footer">
-        🔥 Нажми на имя — скопируй
+        🔥 Нажми на никнейм — скопируй
     </div>
 </div>
 
 <script>
-    const namesDB = {
-        fantasy: ["Элариан", "Сильвана", "Торион", "Люмиэль", "Дориан", "Финрод", "Арвенэль", "Трандуил", "Галадриэль", "Эрагор"],
-        cyberpunk: ["Nexus-7", "Zero_K3", "Raven_Synth", "Vex_H4", "Nova_Ryder", "Cipher_X", "Echo_404", "Ghost_Byte", "Pixel_K1", "Frost_9"],
-        slavic: ["Борислав", "Мирослава", "Владимир", "Добрыня", "Златомир", "Ладимир", "Святогор", "Белослава", "Радомир", "Велеслав"],
-        gaming: ["NightHunter", "ShadowReaper", "QueenBee", "IronViper", "SilentKill", "PhantomFox", "BlazeStorm", "CrimsonGhost", "NeonSpectre", "ThunderWolf"],
-        mythical: ["Игнис", "Аурелия", "Зефирон", "Серафис", "Обсидиан", "Люциан", "Валерион", "Моргана", "Этернис", "Солорин"]
+    const nicknamesDB = {
+        fantasy: ["ShadowBlade", "MoonWhisper", "ElvenKing", "DragonSoul", "FrostMage", "StarWalker", "NightShade", "SilverFox", "StormBringer", "WildHeart"],
+        cyberpunk: ["NeonGhost", "ZeroCool", "RazorWire", "CyberPunk2077", "DataViper", "GlitchMode", "SynthWave", "PhantomByte", "CryptoLord", "PixelKiller"],
+        gaming: ["NoobSlayer", "HeadshotKing", "RageQuit", "EpicGamer", "LagKiller", "SniperElite", "XPBooster", "ClutchMaster", "FragOut", "GG_WP"],
+        mythical: ["PhoenixRise", "ThunderGod", "SirenSong", "Behemoth", "HydraVenom", "Odin'sEye", "LunarWolf", "EternalSoul", "MysticHaze", "CelestialOne"]
     };
 
-    const bgClasses = {
-        fantasy: "fantasy-bg",
-        cyberpunk: "cyberpunk-bg",
-        slavic: "slavic-bg",
-        gaming: "gaming-bg",
-        mythical: "mythical-bg"
+    const categoryEmojis = {
+        fantasy: "🧙",
+        cyberpunk: "🤖",
+        gaming: "🎮",
+        mythical: "🐉"
     };
 
     let currentCat = "fantasy";
@@ -372,22 +326,27 @@
         });
     }
 
-    function changeBackground(category) {
-        document.body.classList.remove(...Object.values(bgClasses));
-        document.body.classList.add(bgClasses[category]);
-        document.body.classList.remove('loaded');
-        setTimeout(() => document.body.classList.add('loaded'), 50);
+    function updateBigEmoji(category) {
+        const emoji = categoryEmojis[category];
+        const bigEmojiDiv = document.getElementById('bigEmoji');
+        if (bigEmojiDiv) {
+            bigEmojiDiv.textContent = emoji;
+            bigEmojiDiv.style.animation = 'none';
+            setTimeout(() => {
+                bigEmojiDiv.style.animation = 'float 3s ease-in-out infinite';
+            }, 10);
+        }
     }
 
-    function renderNames() {
-        const names = namesDB[currentCat];
-        const shuffled = [...names].sort(() => Math.random() - 0.5);
+    function renderNicknames() {
+        const nicknames = nicknamesDB[currentCat];
+        const shuffled = [...nicknames].sort(() => Math.random() - 0.5);
         const selected = shuffled.slice(0, 8);
         
-        const html = selected.map(name => `
+        const html = selected.map(nick => `
             <div class="name-item">
-                <span class="name-text">${escapeHtml(name)}</span>
-                <button class="copy-btn" data-name="${escapeHtml(name)}">📋 Копировать</button>
+                <span class="name-text">${escapeHtml(nick)}</span>
+                <button class="copy-btn" data-name="${escapeHtml(nick)}">📋 Копировать</button>
             </div>
         `).join('');
         
@@ -395,8 +354,8 @@
         
         document.querySelectorAll('.copy-btn').forEach(btn => {
             btn.addEventListener('click', () => {
-                const name = btn.dataset.name;
-                navigator.clipboard.writeText(name);
+                const nick = btn.dataset.name;
+                navigator.clipboard.writeText(nick);
                 const original = btn.textContent;
                 btn.textContent = '✅ Готово';
                 setTimeout(() => btn.textContent = original, 1000);
@@ -413,13 +372,13 @@
             document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             currentCat = btn.dataset.cat;
-            changeBackground(currentCat);
-            renderNames();
+            updateBigEmoji(currentCat);
+            renderNicknames();
         });
     });
 
     document.getElementById('generateBtn').addEventListener('click', () => {
-        renderNames();
+        renderNicknames();
     });
 
     document.querySelectorAll('.theme-option').forEach(btn => {
@@ -427,9 +386,8 @@
     });
 
     setTheme(currentTheme);
-    changeBackground('fantasy');
-    renderNames();
-    document.body.classList.add('loaded');
+    updateBigEmoji('fantasy');
+    renderNicknames();
 </script>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </body>
